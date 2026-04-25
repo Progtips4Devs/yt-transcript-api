@@ -21,18 +21,12 @@ def get_transcript():
         return jsonify({'error': 'Thiếu tham số video_id'}), 400
 
     try:
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        
+        # get_transcript hỗ trợ cả bản cũ và mới của thư viện
         try:
-            # Ưu tiên lấy tiếng Anh hoặc tiếng Việt
-            transcript = transcript_list.find_transcript(['en', 'en-US', 'en-GB', 'vi'])
+            raw = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'en-US', 'en-GB', 'vi'])
         except Exception:
-            # Nếu không có, lấy transcript đầu tiên trong danh sách và dịch sang tiếng Anh
-            for t in transcript_list:
-                transcript = t.translate('en')
-                break
-                
-        raw = transcript.fetch()
+            # Nếu không tìm thấy ngôn ngữ mong muốn, lấy mặc định bản đầu tiên
+            raw = YouTubeTranscriptApi.get_transcript(video_id)
 
         # Chuyển sang format {text, start, end}
         result = []
