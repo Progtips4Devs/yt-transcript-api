@@ -21,12 +21,14 @@ def get_transcript():
         return jsonify({'error': 'Thiếu tham số video_id'}), 400
 
     try:
-        # get_transcript hỗ trợ cả bản cũ và mới của thư viện
+        ytt_api = YouTubeTranscriptApi()
         try:
-            raw = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'en-US', 'en-GB', 'vi'])
+            transcript = ytt_api.fetch(video_id, languages=['en', 'en-US', 'en-GB', 'vi'])
         except Exception:
-            # Nếu không tìm thấy ngôn ngữ mong muốn, lấy mặc định bản đầu tiên
-            raw = YouTubeTranscriptApi.get_transcript(video_id)
+            # Nếu không tìm thấy ngôn ngữ mong muốn, lấy mặc định
+            transcript = ytt_api.fetch(video_id)
+            
+        raw = transcript.to_raw_data()
 
         # Chuyển sang format {text, start, end}
         result = []
