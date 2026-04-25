@@ -1,0 +1,4 @@
+youtube-transcript-api>=0.6.2
+flask
+flask-cors
+gunicorn
